@@ -5,6 +5,9 @@ import RoomList from './RoomList';
 import io from 'socket.io-client';
 let socket;
 const Home = () => {
+    const { user, setUser } = useContext(UserContext);
+    const [room, setRoom] = useState('');
+    const [rooms, setRooms] = useState([]);
     const ENDPT = 'localhost:5000';
     useEffect(() => {
         socket = io(ENDPT);
@@ -13,8 +16,21 @@ const Home = () => {
             socket.off();
         }
     }, [ENDPT])
-    const { user, setUser } = useContext(UserContext);
-    const [room, setRoom] = useState('');
+    useEffect(() => {
+        socket.on('output-rooms', rooms => {
+            setRooms(rooms)
+        })
+
+    }, [])
+    useEffect(() => {
+        socket.on('room-created', room => {
+            setRooms([...rooms, room])
+        })
+    }, [rooms])
+    useEffect(() => {
+        console.log(rooms)
+    }, [rooms])
+
     const handleSubmit = e => {
         e.preventDefault();
         socket.emit('create-room', room);
@@ -22,16 +38,7 @@ const Home = () => {
         setRoom('');
 
     }
-    const rooms = [
-        {
-            name: 'room1',
-            _id: '123'
-        },
-        {
-            name: 'room2',
-            _id: '456'
-        }
-    ]
+
     const setAsJohn = () => {
         const john = {
             name: 'John',

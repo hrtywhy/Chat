@@ -1,4 +1,8 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
+const authRoutes = require('./routes/authRoutes');
+app.use(express.json());
+app.use(authRoutes);
 const http = require('http').createServer(app);
 const mongoose = require('mongoose');
 const socketio = require('socket.io')
@@ -6,12 +10,21 @@ const io = socketio(http);
 const mongoDB = "mongodb+srv://ckmobile:ckmobile123@cluster0.niuuw.mongodb.net/chat-database?retryWrites=true&w=majority";
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log('connected')).catch(err => console.log(err))
 const { addUser, getUser, removeUser } = require('./helper');
-const PORT = process.env.PORT || 5000
+const Message = require('./models/Message');
+const PORT = process.env.PORT || 5000;
+const Room = require('./models/Room');
 
 io.on('connection', (socket) => {
     console.log(socket.id);
+    Room.find().then(result => {
+        socket.emit('output-rooms', result)
+    })
     socket.on('create-room', name => {
-        console.log('Then room name received is ', name)
+        // console.log('Then room name received is ', name)
+        const room = new Room({ name });
+        room.save().then(result => {
+            io.emit('room-created', result)
+        })
     })
     socket.on('join', ({ name, room_id, user_id }) => {
         const { error, user } = addUser({
@@ -36,8 +49,17 @@ io.on('connection', (socket) => {
             text: message
         }
         console.log('message', msgToStore)
-        io.to(room_id).emit('message', msgToStore);
-        callback()
+        const msg = new Message(msgToStore);
+        msg.save().then(result => {
+            io.to(room_id).emit('message', result);
+            callback()
+        })
+
+    })
+    socket.on('get-messages-history', room_id => {
+        Message.find({ room_id }).then(result => {
+            socket.emit('output-messages', result)
+        })
     })
     socket.on('disconnect', () => {
         const user = removeUser(socket.id);
