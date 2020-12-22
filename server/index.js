@@ -1,8 +1,12 @@
 const express = require('express');
 const app = express();
 const authRoutes = require('./routes/authRoutes');
+const cookieParser = require('cookie-parser')
+
 app.use(express.json());
 app.use(authRoutes);
+app.use(cookieParser());
+
 const http = require('http').createServer(app);
 const mongoose = require('mongoose');
 const socketio = require('socket.io')
@@ -13,6 +17,17 @@ const { addUser, getUser, removeUser } = require('./helper');
 const Message = require('./models/Message');
 const PORT = process.env.PORT || 5000;
 const Room = require('./models/Room');
+
+app.get('/set-cookies', (req, res) => {
+    res.cookie('username', 'Tony');
+    res.cookie('isAuthenticated', true, { maxAge: 24 * 60 * 60 * 1000 });
+    res.send('cookies are set');
+})
+app.get('/get-cookies', (req, res) => {
+    const cookies = req.cookies;
+    console.log(cookies);
+    res.json(cookies);
+})
 
 io.on('connection', (socket) => {
     console.log(socket.id);
