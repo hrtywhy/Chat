@@ -10,8 +10,8 @@ var corsOptions = {
 const authRoutes = require('./routes/authRoutes');
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(authRoutes);
 app.use(cookieParser());
+app.use(authRoutes);
 
 const http = require('http').createServer(app);
 const mongoose = require('mongoose');
