@@ -1,5 +1,7 @@
 <a align="center">
-    <img src="https://img.shields.io/badge/build-passing-green"
+    <img src="https://img.shields.io/badge/build-passing-green">
+    <img src="https://img.shields.io/badge/update%20date-february%202021-red">
+    <img src="https://img.shields.io/badge/node--lts%40latest-%3E%3D%2014.16.0-brightgreen">
 </a>
 
 # Introducing
