@@ -1,8 +1,10 @@
-<a align="center">
+![Capture](https://user-images.githubusercontent.com/44236850/109677525-53799380-7bac-11eb-8b71-89a11d5c59c5.PNG)
+
+<p align="center">
     <img src="https://img.shields.io/badge/build-passing-green">
     <img src="https://img.shields.io/badge/update%20date-february%202021-red">
     <img src="https://img.shields.io/badge/node--lts%40latest-%3E%3D%2014.16.0-brightgreen">
-</a>
+</p>
 
 # Introducing
 Chat is simple Real World Application built using MEVN stack, Socket.io and auth with JWT
